@@ -3,9 +3,10 @@
 	    {% block title%} Articles {% endblock %}
 	    {% block body %} 
 	    {% if articles %}
-	    	<table id="articles" class="table table-stripeed">
+	    	<table id="articles" class="table table-bordered table-stripeed ">
 	    		<thead>
 		    		<tr>
+		    			<th>Title</th>
 		    			<th>Articles</th>
 		    			<th>Actions</th>
 		    		</tr>	    			
@@ -13,9 +14,19 @@
 	    		<tbody>
 	    			{% for article in  articles %}
 	    			<tr>
-	    				<td>{{article.title}}</td>
-	    				<td><a class="btn btn-dark" href="article/{{article.id}}">Show</a></td>
-	    				<td><a data-id="{{article.id}}" class="btn btn-danger delete-article" href="delete/{{article.id}}">Delete</a></td>
+	    				<td  >{{article.title}}</td>
+	    				<td  >{{article.body}}</td>
+	    				<td width="300">
+	    				<a class="btn btn-success" href="article/{{article.id}}">
+	    					<span class="fa fa-eye"> </span> Show
+	    				</a>	    				
+	    				<a class="btn btn-dark" href="article/edit/{{article.id}}">
+	    					<span class="fa fa-edit"> </span> Edit
+	    				</a>
+	    				<a data-id="{{article.id}}" class="btn btn-danger delete-article" href="delete/{{article.id}}">
+						<span class="fa fa-trash"></span> Delete
+	    				</a>
+	    				</td>
 	    			</tr>
 	    			{% endfor %}
 	    		</tbody>

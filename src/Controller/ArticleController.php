@@ -1,5 +1,5 @@
 <?php
-// src/Controller/LuckyController.php
+// src/Controller/ArticleController.php
 namespace App\Controller;
 use App\Entity\Article;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpKernel\Exception;
+
 
 class ArticleController extends Controller
 {
@@ -39,6 +40,15 @@ class ArticleController extends Controller
 		->add('save',SubmitType::class,array('attr'=>array('class'=>'btn btn-primary mb-3')))
 		->getForm();
 
+		$form->handleRequest($request);
+		if($form->isSubmitted() && $form->isValid()){
+			$article=$form->getData();
+			$entityManager=$this->getDoctrine()->getManager();
+			$entityManager->persist($article);
+			$entityManager->flush();
+			return $this->redirectTORoute('article_list');
+		}
+
 		return $this->render('articles/new.html.twig',array('form' =>$form->createView()));
 	}
 
@@ -52,7 +62,29 @@ class ArticleController extends Controller
 		$entityManager->remove($article);
 		$entityManager->flush();
 		$response= new Response();
-		return $response->send();
+		$response->send();
+		return $this->redirectTORoute('article_list');
+	}
+	/**
+	*  @Route("article/edit/{id}",name="edit_article")
+	*  @Method({"GET","POST"})
+	*/
+	public function edit(Request $request, $id){
+		$article=new Article();
+		$article=$this->getDoctrine()->getRepository(Article::class)->find($id);
+		$form=$this->createFormBuilder($article)
+		->add('title',TextType::class,array('attr'=>array('class' => 'form-control')))
+		->add('body',TextareaType::class,array('attr'=>array('class' => 'form-control')))
+		->add('update',SubmitType::class,array('attr'=>array('class'=>'btn btn-primary mb-3')))
+		->getForm();
+
+		$form->handleRequest($request);
+		if($form->isSubmitted() && $form->isValid()){
+			$entityManager=$this->getDoctrine()->getManager();
+			$entityManager->flush();
+			return $this->redirectTORoute('article_list');
+		}
+		return $this->render('articles/edit.html.twig',array('form' =>$form->createView()));
 	}
 
 
